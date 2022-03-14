@@ -78,6 +78,7 @@ def single_gpu_test(model,
     model.eval()
     results = []
     dataset = data_loader.dataset
+    # print("DATASET LINE 81: ", dataset)
     prog_bar = mmcv.ProgressBar(len(dataset))
     # The pipeline about how the data_loader retrieval samples from dataset:
     # sampler -> batch_sampler -> indices
@@ -107,6 +108,7 @@ def single_gpu_test(model,
                     out_file = osp.join(out_dir, img_meta['ori_filename'])
                 else:
                     out_file = None
+                # print("dataset.PALETTE!!!! ", dataset.PALETTE)
 
                 model.module.show_result(
                     img_show,

@@ -4,6 +4,7 @@ from collections import OrderedDict
 import mmcv
 import numpy as np
 import torch
+import torchvision.transforms.functional as tf
 
 
 def f_score(precision, recall, beta=1):
@@ -62,7 +63,7 @@ def intersect_and_union(pred_label,
             mmcv.imread(label, flag='unchanged', backend='pillow'))
     else:
         label = torch.from_numpy(label)
-
+    # print("label map ", label_map)
     if label_map is not None:
         for old_id, new_id in label_map.items():
             label[label == old_id] = new_id
@@ -70,8 +71,16 @@ def intersect_and_union(pred_label,
         label[label == 0] = 255
         label = label - 1
         label[label == 254] = 255
-
+    # label = tf.rgb_to_grayscale(label, 1)
+    # print("label shape ", label.shape)
+    # print("pred label: ", torch.max(pred_label))
+    label = label[:,:,0]
+    # print("label shape after ", label.shape)
     mask = (label != ignore_index)
+    # print("pred label: ", pred_label)
+    # print("pred label shape: ", pred_label.shape)
+    # print("mask: ", mask)
+    # print("mask shape: ", mask.shape)
     pred_label = pred_label[mask]
     label = label[mask]
 

@@ -243,6 +243,7 @@ class BaseSegmentor(BaseModule, metaclass=ABCMeta):
         img = mmcv.imread(img)
         img = img.copy()
         seg = result[0]
+        # print("self classes ", self.CLASSES)
         if palette is None:
             if self.PALETTE is None:
                 # Get random state before set seed,
@@ -259,6 +260,8 @@ class BaseSegmentor(BaseModule, metaclass=ABCMeta):
             else:
                 palette = self.PALETTE
         palette = np.array(palette)
+        print("PALETTE SHAPE 0 ", palette.shape[0])
+        print("LEN SELF CLASSES ", len(self.CLASSES))
         assert palette.shape[0] == len(self.CLASSES)
         assert palette.shape[1] == 3
         assert len(palette.shape) == 2

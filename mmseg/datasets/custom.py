@@ -282,9 +282,11 @@ class CustomDataset(Dataset):
             preds = [preds]
 
         pre_eval_results = []
-
+        # print("preds shape: ", preds[0].shape)
         for pred, index in zip(preds, indices):
             seg_map = self.get_gt_seg_map_by_idx(index)
+            # print("seg map shape: ", seg_map.shape)
+            # print("pred shape: ", pred.shape)
             pre_eval_results.append(
                 intersect_and_union(pred, seg_map, len(self.CLASSES),
                                     self.ignore_index, self.label_map,
@@ -305,6 +307,8 @@ class CustomDataset(Dataset):
                 The palette of segmentation map. If None is given, random
                 palette will be generated. Default: None
         """
+        # print("print classes!!: ", classes)
+        # print("print palette!!: ", palette)
         if classes is None:
             self.custom_classes = False
             return self.CLASSES, self.PALETTE
@@ -326,14 +330,18 @@ class CustomDataset(Dataset):
             # are the new label ids.
             # used for changing pixel labels in load_annotations.
             self.label_map = {}
+            # print("class_names ", class_names)
             for i, c in enumerate(self.CLASSES):
                 if c not in class_names:
                     self.label_map[i] = -1
                 else:
                     self.label_map[i] = class_names.index(c)
-
+        # print("self.label_map!!!!!: ", self.label_map)
+        print("print classes!! before: ", class_names)
+        print("print palette!! before: ", palette)
         palette = self.get_palette_for_custom_classes(class_names, palette)
-
+        print("print classes!! after: ", class_names)
+        print("print palette!! after: ", palette)
         return class_names, palette
 
     def get_palette_for_custom_classes(self, class_names, palette=None):

@@ -191,6 +191,7 @@ def main():
     # build the dataloader
     # TODO: support multiple images per gpu (only minor changes are needed)
     dataset = build_dataset(cfg.data.test)
+    print("Dataset!: ", dataset)
     data_loader = build_dataloader(
         dataset,
         samples_per_gpu=1,
@@ -205,11 +206,11 @@ def main():
     if fp16_cfg is not None:
         wrap_fp16_model(model)
     checkpoint = load_checkpoint(model, args.checkpoint, map_location='cpu')
-    if 'CLASSES' in checkpoint.get('meta', {}):
-        model.CLASSES = checkpoint['meta']['CLASSES']
-    else:
-        print('"CLASSES" not found in meta, use dataset.CLASSES instead')
-        model.CLASSES = dataset.CLASSES
+    # if 'CLASSES' in checkpoint.get('meta', {}):
+    #     model.CLASSES = checkpoint['meta']['CLASSES']
+    # else:
+    print('"CLASSES" not found in meta, use dataset.CLASSES instead')
+    model.CLASSES = dataset.CLASSES
     if 'PALETTE' in checkpoint.get('meta', {}):
         model.PALETTE = checkpoint['meta']['PALETTE']
     else:
@@ -254,6 +255,8 @@ def main():
                 'Please use MMCV >= 1.4.4 for CPU training!'
         model = revert_sync_batchnorm(model)
         model = MMDataParallel(model, device_ids=cfg.gpu_ids)
+        # print("MODEL ", model)
+        # print("DATA LOADER ", data_loader)
         results = single_gpu_test(
             model,
             data_loader,

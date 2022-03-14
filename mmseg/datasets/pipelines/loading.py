@@ -120,6 +120,7 @@ class LoadAnnotations(object):
         Returns:
             dict: The dict contains loaded semantic segmentation annotations.
         """
+        print("AYOOOOOOOOOOOO")
 
         if self.file_client is None:
             self.file_client = mmcv.FileClient(**self.file_client_args)
