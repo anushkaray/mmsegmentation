@@ -13,6 +13,7 @@ from mmseg.core import eval_metrics, intersect_and_union, pre_eval_to_metrics
 from mmseg.utils import get_root_logger
 from .builder import DATASETS
 from .pipelines import Compose, LoadAnnotations
+import torch
 
 
 @DATASETS.register_module()
@@ -245,6 +246,7 @@ class CustomDataset(Dataset):
         results = dict(ann_info=ann_info)
         self.pre_pipeline(results)
         self.gt_seg_map_loader(results)
+        # print("GT CONFIG IN CUSTOM ", self.gt_seg_map_loader_cfg)
         return results['gt_semantic_seg']
 
     def get_gt_seg_maps(self, efficient_test=None):
@@ -280,17 +282,19 @@ class CustomDataset(Dataset):
             indices = [indices]
         if not isinstance(preds, list):
             preds = [preds]
-
+        # print("indices in customs: ", indices)
         pre_eval_results = []
-        # print("preds shape: ", preds[0].shape)
         for pred, index in zip(preds, indices):
-            seg_map = self.get_gt_seg_map_by_idx(index)
-            # print("seg map shape: ", seg_map.shape)
-            # print("pred shape: ", pred.shape)
+            # print("index in customs: ", index)
+            seg_map = self.get_gt_seg_map_by_idx(index) 
+            print("pred in custom: ", np.amax(pred))
+            print("seg map in custom: ", np.amax(seg_map))
             pre_eval_results.append(
                 intersect_and_union(pred, seg_map, len(self.CLASSES),
                                     self.ignore_index, self.label_map,
                                     self.reduce_zero_label))
+            
+     
 
         return pre_eval_results
 
@@ -347,6 +351,7 @@ class CustomDataset(Dataset):
     def get_palette_for_custom_classes(self, class_names, palette=None):
 
         if self.label_map is not None:
+            # print("LABEL MAP IS NOT NONE IN CUSTOM")
             # return subset of palette
             palette = []
             for old_id, new_id in sorted(
@@ -357,6 +362,7 @@ class CustomDataset(Dataset):
 
         elif palette is None:
             if self.PALETTE is None:
+                # print("PALETTE IS NOT OURS IT IS RANDOM IN CUSTOM")
                 # Get random state before set seed, and restore
                 # random state later.
                 # It will prevent loss of randomness, as the palette
@@ -368,6 +374,7 @@ class CustomDataset(Dataset):
                 palette = np.random.randint(0, 255, size=(len(class_names), 3))
                 np.random.set_state(state)
             else:
+                # print("PALETTE IS OURS IN CUSTOM")
                 palette = self.PALETTE
 
         return palette

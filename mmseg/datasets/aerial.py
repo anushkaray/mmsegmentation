@@ -18,8 +18,10 @@ class AerialDataset(CustomDataset):
     The ``img_suffix`` is fixed to '.jpg' and ``seg_map_suffix`` is fixed to
     '.png'.
     """
-    AERIAL_CLASSES = ('sidewalk', 'earth', 'grass', 'sand', 'water', 'rock', 'swimming pool', 'plant', 
-               'building', 'wall', 'windowpane', 'door', 'fence', 'pole', 'person', 'animal', 'car', 'bicycle', 'tree', 'television receiver', 'microwave', 'coffee table', 'trade name', 'sconce')
+    AERIAL_CLASSES = ('sconce', 'sidewalk', 'earth', 'grass', 'sand', 'water', 'rock', 'swimming pool', 'plant', 
+               'building', 'wall', 'windowpane', 'door', 'fence', 'pole', 'person', 'animal', 'car', 'bicycle', 'tree', 'television receiver', 'microwave', 'coffee table', 'trade name')
+    
+    # AERIAL_CLASSES = ('wall', 'building', 'tree', 'windowpane',  'grass', 'sidewalk', 'person','earth', 'door', 'plant','car', 'water','fence', 'rock', 'sand', 'coffee table', 'television receiver', 'pole','swimming pool','trade name', 'microwave', 'animal', 'bicycle','sconce')
     CLASSES = (
         'wall', 'building', 'sky', 'floor', 'tree', 'ceiling', 'road', 'bed ',
         'windowpane', 'grass', 'cabinet', 'sidewalk', 'person', 'earth',
@@ -46,7 +48,12 @@ class AerialDataset(CustomDataset):
         'plate', 'monitor', 'bulletin board', 'shower', 'radiator', 'glass',
         'clock', 'flag')
 
-    AERIAL_PALETTE = [[128, 64, 128], [130, 76, 0], [0, 102, 0], [112, 103, 87], [28, 42, 168], [48, 41, 30], [0, 50, 89], [107, 142, 35], [70, 70, 70], [102, 102, 156], [254, 228, 12], [254, 148, 12], [190, 153, 153], [153, 153, 153], [255, 22, 96], [102, 51, 0], [9, 143, 150], [119, 11, 32], [51, 51, 0], [190, 250, 190], [112, 150, 146], [2, 135, 115], [255, 0, 0], [0, 0, 0]]
+    AERIAL_PALETTE = [[0, 0, 0], [128, 64, 128], [130, 76, 0], [0, 102, 0], [112, 103, 87], [28, 42, 168], [48, 41, 30], [0, 50, 89], [107, 142, 35], [70, 70, 70], [102, 102, 156], [254, 228, 12], [254, 148, 12], [190, 153, 153], [153, 153, 153], [255, 22, 96], [102, 51, 0], [9, 143, 150], [119, 11, 32], [51, 51, 0], [190, 250, 190], [112, 150, 146], [2, 135, 115], [255, 0, 0]]
+
+
+    # AERIAL_PALETTE = [[102, 102, 156], [70, 70, 70], [51, 51, 0], [254, 228, 12], [0, 102, 0], [128, 64, 128], [255, 22, 96], [130, 76, 0], [254, 148, 12], [107, 142, 35], [9, 143, 150], [28, 42, 168], [190, 153, 153], [48, 41, 30], [112, 103, 87],[2, 135, 115], [190, 250, 190],[153, 153, 153], [0, 50, 89], [255, 0, 0],[112, 150, 146],[102, 51, 0],  [190, 250, 190], [0, 0, 0]]
+    
+    
     PALETTE = [[120, 120, 120], [180, 120, 120], [6, 230, 230], [80, 50, 50],
                [4, 200, 3], [120, 120, 80], [140, 140, 140], [204, 5, 255],
                [230, 230, 230], [4, 250, 7], [224, 5, 255], [235, 255, 7],
@@ -96,6 +103,8 @@ class AerialDataset(CustomDataset):
             **kwargs
             )
         self.CLASSES, self.PALETTE = self.get_classes_and_palette(self.AERIAL_CLASSES, self.AERIAL_PALETTE)
+        self.gt_seg_map_loader_cfg = None
+        self.reduce_zero_label = False
         # print("self.classes len ", len(self.CLASSES))
         # print("self.palette len ", len(self.PALETTE))
 

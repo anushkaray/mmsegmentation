@@ -54,7 +54,7 @@ def intersect_and_union(pred_label,
     """
 
     if isinstance(pred_label, str):
-        pred_label = torch.from_numpy(np.load(pred_label))
+        pred_label = torch.from_numpy(np.load(pred_label)) 
     else:
         pred_label = torch.from_numpy((pred_label))
 
@@ -63,26 +63,20 @@ def intersect_and_union(pred_label,
             mmcv.imread(label, flag='unchanged', backend='pillow'))
     else:
         label = torch.from_numpy(label)
-    # print("label map ", label_map)
-    if label_map is not None:
-        for old_id, new_id in label_map.items():
-            label[label == old_id] = new_id
+    ## I commented this out because this was being done twice (once in loading and once here)
+    # if label_map is not None:
+    #     for old_id, new_id in label_map.items():
+    #         label[label == old_id] = new_id
     if reduce_zero_label:
         label[label == 0] = 255
         label = label - 1
         label[label == 254] = 255
-    # label = tf.rgb_to_grayscale(label, 1)
-    # print("label shape ", label.shape)
-    # print("pred label: ", torch.max(pred_label))
-    label = label[:,:,0]
-    # print("label shape after ", label.shape)
     mask = (label != ignore_index)
-    # print("pred label: ", pred_label)
-    # print("pred label shape: ", pred_label.shape)
-    # print("mask: ", mask)
-    # print("mask shape: ", mask.shape)
     pred_label = pred_label[mask]
     label = label[mask]
+    
+    print("Predicted Label (metrics.py) ", pred_label)
+    print("Ground Truth Label (metrics.py) ", label)
 
     intersect = pred_label[pred_label == label]
     area_intersect = torch.histc(
