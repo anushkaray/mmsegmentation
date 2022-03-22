@@ -341,11 +341,11 @@ class CustomDataset(Dataset):
                 else:
                     self.label_map[i] = class_names.index(c)
         # print("self.label_map!!!!!: ", self.label_map)
-        print("print classes!! before: ", class_names)
-        print("print palette!! before: ", palette)
+        # print("print classes!! before: ", class_names)
+        # print("print palette!! before: ", palette)
         palette = self.get_palette_for_custom_classes(class_names, palette)
-        print("print classes!! after: ", class_names)
-        print("print palette!! after: ", palette)
+        # print("print classes!! after: ", class_names)
+        # print("print palette!! after: ", palette)
         return class_names, palette
 
     def get_palette_for_custom_classes(self, class_names, palette=None):
@@ -406,7 +406,7 @@ class CustomDataset(Dataset):
         allowed_metrics = ['mIoU', 'mDice', 'mFscore']
         if not set(metric).issubset(set(allowed_metrics)):
             raise KeyError('metric {} is not supported'.format(metric))
-
+        
         eval_results = {}
         # test a list of files
         if mmcv.is_list_of(results, np.ndarray) or mmcv.is_list_of(
@@ -425,7 +425,7 @@ class CustomDataset(Dataset):
         # test a list of pre_eval_results
         else:
             ret_metrics = pre_eval_to_metrics(results, metric)
-
+        
         # Because dataset.CLASSES is required for per-eval.
         if self.CLASSES is None:
             class_names = tuple(range(num_classes))

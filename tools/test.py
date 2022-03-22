@@ -255,8 +255,6 @@ def main():
                 'Please use MMCV >= 1.4.4 for CPU training!'
         model = revert_sync_batchnorm(model)
         model = MMDataParallel(model, device_ids=cfg.gpu_ids)
-        # print("MODEL ", model)
-        # print("DATA LOADER ", data_loader)
         results = single_gpu_test(
             model,
             data_loader,
@@ -294,6 +292,7 @@ def main():
             mmcv.dump(results, args.out)
         if args.eval:
             eval_kwargs.update(metric=args.eval)
+            print("IT IS EVALUATING BRO (tools/test.py")
             metric = dataset.evaluate(results, **eval_kwargs)
             metric_dict = dict(config=args.config, metric=metric)
             mmcv.dump(metric_dict, json_file, indent=4)

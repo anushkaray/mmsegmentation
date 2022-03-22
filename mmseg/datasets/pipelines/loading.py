@@ -130,20 +130,20 @@ class LoadAnnotations(object):
                                 results['ann_info']['seg_map'])
         else:
             filename = results['ann_info']['seg_map']
-        print("Filename (Loding.py) ", filename)
+        print("Filename (Loading.py) ", filename)
         
-        gt_semantic_seg = np.asarray(Image.open(filename))
-        print("GT Semantic Seg Before Changing Labels (Loading.py): ", gt_semantic_seg)
-        # img_bytes = self.file_client.get(filename)
+        # gt_semantic_seg = np.asarray(Image.open(filename))
+        # print("GT Semantic Seg Max Before Changing Labels (Loading.py): ", np.max(gt_semantic_seg))
+        img_bytes = self.file_client.get(filename)
         
-        # gt_semantic_seg = mmcv.imfrombytes(
-        #     img_bytes, flag='unchanged', channel_order='rgb',
-        #     backend=self.imdecode_backend).squeeze().astype(np.uint8)
-
+        gt_semantic_seg = mmcv.imfrombytes(
+            img_bytes, flag='unchanged', channel_order='rgb',
+            backend=self.imdecode_backend).squeeze().astype(np.uint8)
+        # print("max of gt semantic seg (Loading.py)", np.max(gt_semantic_seg))
         # print("LABEL MAP IN LOAD ANN ", results['label_map'])
         # modify if custom classes
-        if results.get('label_map', None) is not None:
-            # print("LINE 142 OF LOADANN")
+        # if results.get('label_map', None) is not None:
+        #     print("LINE 142 OF LOADANN")
             # updated = set()
             # for x in range(len(gt_semantic_seg)):
             #     for y in range(len(gt_semantic_seg[x])):
@@ -160,13 +160,15 @@ class LoadAnnotations(object):
             ### This is the original code
             # for old_id, new_id in results['label_map'].items():
             #     gt_semantic_seg[gt_semantic_seg == new_id] = old_id
-            updated = set()
-            for old_id, new_id in results['label_map'].items():
-                indices = np.argwhere(gt_semantic_seg == new_id)
-                for index in indices:
-                    if tuple(index) not in updated:
-                        gt_semantic_seg[index[0]][index[1]] = old_id
-                        updated.add(tuple(index))
+            
+            ##This code works for converting gt_semantic_seg to ADE20K class IDs
+            # updated = set()
+            # for old_id, new_id in results['label_map'].items():
+            #     indices = np.argwhere(gt_semantic_seg == new_id)
+            #     for index in indices:
+            #         if tuple(index) not in updated:
+            #             gt_semantic_seg[index[0]][index[1]] = old_id
+            #             updated.add(tuple(index))
                          
         # reduce zero_label
         if self.reduce_zero_label:
@@ -174,7 +176,6 @@ class LoadAnnotations(object):
             gt_semantic_seg[gt_semantic_seg == 0] = 255
             gt_semantic_seg = gt_semantic_seg - 1
             gt_semantic_seg[gt_semantic_seg == 254] = 255
-        print("GT Semantic Seg After Changing Labels (Loading.py) ", gt_semantic_seg)
         results['gt_semantic_seg'] = gt_semantic_seg
         results['seg_fields'].append('gt_semantic_seg')
         return results

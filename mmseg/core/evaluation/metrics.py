@@ -52,6 +52,15 @@ def intersect_and_union(pred_label,
          torch.Tensor: The prediction histogram on all classes.
          torch.Tensor: The ground truth histogram on all classes.
     """
+    # print("Predicted Label before converting to Aerial (metrics.py): ", pred_label)
+    # updated = set()
+    # for old_id, new_id in label_map.items():
+    #     indices = np.argwhere(pred_label == old_id)
+    #     # print("indices ", indices)
+    #     for index in indices:
+    #         if tuple(index) not in updated:
+    #             pred_label[index[0]][index[1]] = new_id
+    #             updated.add(tuple(index))
 
     if isinstance(pred_label, str):
         pred_label = torch.from_numpy(np.load(pred_label)) 
@@ -67,25 +76,39 @@ def intersect_and_union(pred_label,
     # if label_map is not None:
     #     for old_id, new_id in label_map.items():
     #         label[label == old_id] = new_id
+    
+    print("Predicted Label before mask (metrics.py) ", pred_label)
+    print("Ground Truth Label before mask (metrics.py) ", label)
     if reduce_zero_label:
         label[label == 0] = 255
         label = label - 1
         label[label == 254] = 255
     mask = (label != ignore_index)
+    # print("Mask (metrics.py) ", mask)
     pred_label = pred_label[mask]
     label = label[mask]
     
-    print("Predicted Label (metrics.py) ", pred_label)
-    print("Ground Truth Label (metrics.py) ", label)
-
+    # print("Predicted Label after mask (metrics.py) ", pred_label)
+    # print("Ground Truth Label after mask (metrics.py) ", label)
+    # print("Length of Predicted Label (metrics.py) ", len(pred_label))
+    # print("Length of Ground Truth Label (metrics.py) ", len(label))
+    # print("Ground Truth Maximum Value (metrics.py): " , torch.max(label))
     intersect = pred_label[pred_label == label]
+    # print("Intersect (metrics.py): ", intersect)
     area_intersect = torch.histc(
         intersect.float(), bins=(num_classes), min=0, max=num_classes - 1)
     area_pred_label = torch.histc(
         pred_label.float(), bins=(num_classes), min=0, max=num_classes - 1)
-    area_label = torch.histc(
-        label.float(), bins=(num_classes), min=0, max=num_classes - 1)
+    area_label = torch.histc(label.float(), bins=(num_classes), min=0, max=num_classes - 1)
+    # area_intersect = torch.histc(
+    #     intersect.float(), bins=(150), min=0, max=149)
+    # area_pred_label = torch.histc(
+    #     pred_label.float(), bins=(150), min=0, max=149)
+    # area_label = torch.histc(label.float(), bins=(150), min=0, max=149)
     area_union = area_pred_label + area_label - area_intersect
+    # print("Area Label (metrics.py) ", area_label)
+    # print("Area Label size (metrics.py) ", area_label.size())
+    # print("Area Label for earth (metrics.py) ", area_label[13])
     return area_intersect, area_union, area_pred_label, area_label
 
 
@@ -128,8 +151,7 @@ def total_intersect_and_union(results,
         total_area_union += area_union
         total_area_pred_label += area_pred_label
         total_area_label += area_label
-    return total_area_intersect, total_area_union, total_area_pred_label, \
-        total_area_label
+    return total_area_intersect, total_area_union, total_area_pred_label, total_area_label
 
 
 def mean_iou(results,
@@ -283,7 +305,7 @@ def eval_metrics(results,
         ndarray: Per category accuracy, shape (num_classes, ).
         ndarray: Per category evaluation metrics, shape (num_classes, ).
     """
-
+    # print("CALLING TOTAL INTERSECT AND UNION")
     total_area_intersect, total_area_union, total_area_pred_label, \
         total_area_label = total_intersect_and_union(
             results, gt_seg_maps, num_classes, ignore_index, label_map,
@@ -318,13 +340,19 @@ def pre_eval_to_metrics(pre_eval_results,
     # [(A_1, B_1, C_1, D_1), ...,  (A_n, B_n, C_n, D_n)] to
     # ([A_1, ..., A_n], ..., [D_1, ..., D_n])
     pre_eval_results = tuple(zip(*pre_eval_results))
+    print("LENGTH PRE EVAL RESULTS (metrics.py) ", len(pre_eval_results))
+    print("SIZE OF EACH pre eval tuple ", len(pre_eval_results[3]))
+    print("size of each tensor in each tuple ", pre_eval_results[3][0].size())
     assert len(pre_eval_results) == 4
 
     total_area_intersect = sum(pre_eval_results[0])
     total_area_union = sum(pre_eval_results[1])
     total_area_pred_label = sum(pre_eval_results[2])
     total_area_label = sum(pre_eval_results[3])
-
+    # print("summation pre eval results ", sum(pre_eval_results[3][2]))
+    # print("TOTAL AREA LABEL IN PRE EVAL RESULTS ", total_area_label[2])
+    # total_area_label = sum(pre_eval_results[3][2])
+    # print("CALLING TOTAL AREA TO METRICS IN PRE EVAL RESULTS")
     ret_metrics = total_area_to_metrics(total_area_intersect, total_area_union,
                                         total_area_pred_label,
                                         total_area_label, metrics, nan_to_num,
@@ -369,6 +397,9 @@ def total_area_to_metrics(total_area_intersect,
         if metric == 'mIoU':
             iou = total_area_intersect / total_area_union
             acc = total_area_intersect / total_area_label
+            print("Total Area Intersect (metrics.py) ", total_area_intersect[2])
+            print("Total Area Union (metrics.py) ", total_area_union[2])
+            print("Total Area Label (metrics.py) ", total_area_label[2]) #i don't think this should be 0
             ret_metrics['IoU'] = iou
             ret_metrics['Acc'] = acc
         elif metric == 'mDice':

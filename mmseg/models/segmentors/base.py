@@ -217,7 +217,8 @@ class BaseSegmentor(BaseModule, metaclass=ABCMeta):
                     show=False,
                     wait_time=0,
                     out_file=None,
-                    opacity=0.5):
+                    opacity=0.5,
+                    label_map=None):
         """Draw `result` over `img`.
 
         Args:
@@ -243,7 +244,17 @@ class BaseSegmentor(BaseModule, metaclass=ABCMeta):
         img = mmcv.imread(img)
         img = img.copy()
         seg = result[0]
-        # print("self classes ", self.CLASSES)
+        # print("seg before updating (base.py) ", seg)
+        # print("seg max before updating (base.py) ", np.max(seg))
+        updated = set()
+        for old_id, new_id in label_map.items():
+            indices = np.argwhere(seg == old_id)
+            # print("indices ", indices)
+            for index in indices:
+                if tuple(index) not in updated:
+                    seg[index[0]][index[1]] = new_id
+                    updated.add(tuple(index))
+
         if palette is None:
             if self.PALETTE is None:
                 # Get random state before set seed,
@@ -260,8 +271,6 @@ class BaseSegmentor(BaseModule, metaclass=ABCMeta):
             else:
                 palette = self.PALETTE
         palette = np.array(palette)
-        print("PALETTE SHAPE 0 ", palette.shape[0])
-        print("LEN SELF CLASSES ", len(self.CLASSES))
         assert palette.shape[0] == len(self.CLASSES)
         assert palette.shape[1] == 3
         assert len(palette.shape) == 2
@@ -269,7 +278,7 @@ class BaseSegmentor(BaseModule, metaclass=ABCMeta):
         color_seg = np.zeros((seg.shape[0], seg.shape[1], 3), dtype=np.uint8)
         for label, color in enumerate(palette):
             color_seg[seg == label, :] = color
-        # convert to BGR
+        # convert to BGR 
         color_seg = color_seg[..., ::-1]
 
         img = img * (1 - opacity) + color_seg * opacity

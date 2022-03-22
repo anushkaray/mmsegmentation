@@ -18,8 +18,7 @@ class AerialDataset(CustomDataset):
     The ``img_suffix`` is fixed to '.jpg' and ``seg_map_suffix`` is fixed to
     '.png'.
     """
-    AERIAL_CLASSES = ('sconce', 'sidewalk', 'earth', 'grass', 'sand', 'water', 'rock', 'swimming pool', 'plant', 
-               'building', 'wall', 'windowpane', 'door', 'fence', 'pole', 'person', 'animal', 'car', 'bicycle', 'tree', 'television receiver', 'microwave', 'coffee table', 'trade name')
+    AERIAL_CLASSES = ('sconce', 'sidewalk', 'earth', 'grass', 'sand', 'water', 'rock', 'swimming pool', 'plant', 'building', 'wall', 'windowpane', 'door', 'fence', 'pole', 'person', 'animal', 'car', 'bicycle', 'tree', 'television receiver', 'microwave', 'coffee table', 'trade name')
     
     # AERIAL_CLASSES = ('wall', 'building', 'tree', 'windowpane',  'grass', 'sidewalk', 'person','earth', 'door', 'plant','car', 'water','fence', 'rock', 'sand', 'coffee table', 'television receiver', 'pole','swimming pool','trade name', 'microwave', 'animal', 'bicycle','sconce')
     CLASSES = (
@@ -105,8 +104,8 @@ class AerialDataset(CustomDataset):
         self.CLASSES, self.PALETTE = self.get_classes_and_palette(self.AERIAL_CLASSES, self.AERIAL_PALETTE)
         self.gt_seg_map_loader_cfg = None
         self.reduce_zero_label = False
-        # print("self.classes len ", len(self.CLASSES))
-        # print("self.palette len ", len(self.PALETTE))
+        print("self.CLASSES in aerial.py ", self.CLASSES)
+        print("self.PALETTE in aerial.py ", self.PALETTE)
 
 
     def results2img(self, results, imgfile_prefix, to_label_id, indices=None):

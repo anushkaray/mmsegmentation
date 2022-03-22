@@ -78,7 +78,6 @@ def single_gpu_test(model,
     model.eval()
     results = []
     dataset = data_loader.dataset
-    # print("DATASET LINE 81: ", dataset)
     prog_bar = mmcv.ProgressBar(len(dataset))
     # The pipeline about how the data_loader retrieval samples from dataset:
     # sampler -> batch_sampler -> indices
@@ -108,7 +107,6 @@ def single_gpu_test(model,
                     out_file = osp.join(out_dir, img_meta['ori_filename'])
                 else:
                     out_file = None
-                # print("dataset.PALETTE!!!! ", dataset.PALETTE)
 
                 model.module.show_result(
                     img_show,
@@ -116,7 +114,8 @@ def single_gpu_test(model,
                     palette=dataset.PALETTE,
                     show=show,
                     out_file=out_file,
-                    opacity=opacity)
+                    opacity=opacity,
+                    label_map=dataset.label_map)
 
         if efficient_test:
             result = [np2tmp(_, tmpdir='.efficient_test') for _ in result]
@@ -128,6 +127,7 @@ def single_gpu_test(model,
             # TODO: adapt samples_per_gpu > 1.
             # only samples_per_gpu=1 valid now
             result = dataset.pre_eval(result, indices=batch_indices)
+            # print("Result in test.py ", result)
             results.extend(result)
         else:
             results.extend(result)
