@@ -191,7 +191,6 @@ def main():
     # build the dataloader
     # TODO: support multiple images per gpu (only minor changes are needed)
     dataset = build_dataset(cfg.data.test)
-    print("Dataset!: ", dataset)
     data_loader = build_dataloader(
         dataset,
         samples_per_gpu=1,
@@ -292,7 +291,6 @@ def main():
             mmcv.dump(results, args.out)
         if args.eval:
             eval_kwargs.update(metric=args.eval)
-            print("IT IS EVALUATING BRO (tools/test.py")
             metric = dataset.evaluate(results, **eval_kwargs)
             metric_dict = dict(config=args.config, metric=metric)
             mmcv.dump(metric_dict, json_file, indent=4)

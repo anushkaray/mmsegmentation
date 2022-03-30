@@ -52,7 +52,6 @@ def intersect_and_union(pred_label,
          torch.Tensor: The prediction histogram on all classes.
          torch.Tensor: The ground truth histogram on all classes.
     """
-    # print("Predicted Label before converting to Aerial (metrics.py): ", pred_label)
     # updated = set()
     # for old_id, new_id in label_map.items():
     #     indices = np.argwhere(pred_label == old_id)
@@ -77,8 +76,8 @@ def intersect_and_union(pred_label,
     #     for old_id, new_id in label_map.items():
     #         label[label == old_id] = new_id
     
-    print("Predicted Label before mask (metrics.py) ", pred_label)
-    print("Ground Truth Label before mask (metrics.py) ", label)
+    print("Predicted Label (metrics.py) ", pred_label)
+    print("Ground Truth Label (metrics.py) ", label)
     if reduce_zero_label:
         label[label == 0] = 255
         label = label - 1
@@ -100,11 +99,7 @@ def intersect_and_union(pred_label,
     area_pred_label = torch.histc(
         pred_label.float(), bins=(num_classes), min=0, max=num_classes - 1)
     area_label = torch.histc(label.float(), bins=(num_classes), min=0, max=num_classes - 1)
-    # area_intersect = torch.histc(
-    #     intersect.float(), bins=(150), min=0, max=149)
-    # area_pred_label = torch.histc(
-    #     pred_label.float(), bins=(150), min=0, max=149)
-    # area_label = torch.histc(label.float(), bins=(150), min=0, max=149)
+
     area_union = area_pred_label + area_label - area_intersect
     # print("Area Label (metrics.py) ", area_label)
     # print("Area Label size (metrics.py) ", area_label.size())

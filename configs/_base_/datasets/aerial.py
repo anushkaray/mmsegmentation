@@ -31,6 +31,7 @@ test_pipeline = [
             dict(type='Collect', keys=['img']),
         ])
 ]
+##THIS IS THE ONE WE WANT
 data = dict(
     samples_per_gpu=4,
     workers_per_gpu=4,
@@ -52,3 +53,26 @@ data = dict(
         img_dir='img_dir/test',
         ann_dir='ann_dir/test',
         pipeline=test_pipeline))
+
+##REMEMBER TO COMMENT THIS OUT LATER
+# data = dict(
+#     samples_per_gpu=4,
+#     workers_per_gpu=4,
+#     train=dict(
+#         type=dataset_type,
+#         data_root=data_root,
+#         img_dir='img_dir/train',
+#         ann_dir='ann_dir/train',
+#         pipeline=train_pipeline),
+#     val=dict(
+#         type=dataset_type,
+#         data_root=data_root,
+#         img_dir='img_dir/train',
+#         ann_dir='ann_dir/train',
+#         pipeline=test_pipeline),
+#     test=dict(
+#         type=dataset_type,
+#         data_root=data_root,
+#         img_dir='img_dir/train',
+#         ann_dir='ann_dir/train',
+#         pipeline=test_pipeline))

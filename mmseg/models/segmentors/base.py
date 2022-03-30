@@ -244,8 +244,6 @@ class BaseSegmentor(BaseModule, metaclass=ABCMeta):
         img = mmcv.imread(img)
         img = img.copy()
         seg = result[0]
-        # print("seg before updating (base.py) ", seg)
-        # print("seg max before updating (base.py) ", np.max(seg))
         updated = set()
         for old_id, new_id in label_map.items():
             indices = np.argwhere(seg == old_id)
@@ -271,6 +269,7 @@ class BaseSegmentor(BaseModule, metaclass=ABCMeta):
             else:
                 palette = self.PALETTE
         palette = np.array(palette)
+        # print("Palette in Base.py ", palette)
         assert palette.shape[0] == len(self.CLASSES)
         assert palette.shape[1] == 3
         assert len(palette.shape) == 2

@@ -287,8 +287,8 @@ class CustomDataset(Dataset):
         for pred, index in zip(preds, indices):
             # print("index in customs: ", index)
             seg_map = self.get_gt_seg_map_by_idx(index) 
-            print("pred in custom: ", np.amax(pred))
-            print("seg map in custom: ", np.amax(seg_map))
+            # print("pred in custom: ", np.amax(pred))
+            # print("seg map in custom: ", np.amax(seg_map))
             pre_eval_results.append(
                 intersect_and_union(pred, seg_map, len(self.CLASSES),
                                     self.ignore_index, self.label_map,

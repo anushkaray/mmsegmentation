@@ -78,6 +78,7 @@ def train_segmentor(model,
 
     # prepare data loaders
     dataset = dataset if isinstance(dataset, (list, tuple)) else [dataset]
+    print("Dataset in API train.py ", dataset)
     data_loaders = [
         build_dataloader(
             ds,

@@ -139,24 +139,6 @@ class LoadAnnotations(object):
         gt_semantic_seg = mmcv.imfrombytes(
             img_bytes, flag='unchanged', channel_order='rgb',
             backend=self.imdecode_backend).squeeze().astype(np.uint8)
-        # print("max of gt semantic seg (Loading.py)", np.max(gt_semantic_seg))
-        # print("LABEL MAP IN LOAD ANN ", results['label_map'])
-        # modify if custom classes
-        # if results.get('label_map', None) is not None:
-        #     print("LINE 142 OF LOADANN")
-            # updated = set()
-            # for x in range(len(gt_semantic_seg)):
-            #     for y in range(len(gt_semantic_seg[x])):
-            #         for old_id, new_id in results['label_map'].items():
-            #             if (x,y) not in updated and gt_semantic_seg[x][y] == new_id:
-            #                 gt_semantic_seg[x][y] = old_id
-            #                 updated.add((x,y))
-
-            # for old_id, new_id in results['label_map'].items():
-            #     if new_id not in updated:
-            #         if new_id in gt_semantic_seg:
-            #             gt_semantic_seg[gt_semantic_seg == new_id] = old_id
-            #             updated.add(old_id)
             ### This is the original code
             # for old_id, new_id in results['label_map'].items():
             #     gt_semantic_seg[gt_semantic_seg == new_id] = old_id

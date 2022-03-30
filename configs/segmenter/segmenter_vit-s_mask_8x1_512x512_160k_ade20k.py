@@ -17,7 +17,11 @@ _base_ = [
 ]
 
 
-checkpoint = 'https://download.openmmlab.com/mmsegmentation/v0.5/pretrain/segmenter/vit_small_p16_384_20220308-410f6037.pth'  # noqa
+# checkpoint = 'https://download.openmmlab.com/mmsegmentation/v0.5/pretrain/segmenter/vit_small_p16_384_20220308-410f6037.pth'  # noqa
+
+# checkpoint = "/home/gridsan/aray/meng/mmsegmentation/checkpoint_folder/segmenter_vit-s_mask_8x1_512x512_160k_ade20k_20220105_151706-511bb103.pth"
+
+checkpoint = "/home/gridsan/aray/meng/mmsegmentation/new_checkpoint/latest.pth"
 
 backbone_norm_cfg = dict(type='LN', eps=1e-6, requires_grad=True)
 model = dict(
