@@ -244,6 +244,11 @@ class BaseSegmentor(BaseModule, metaclass=ABCMeta):
         img = mmcv.imread(img)
         img = img.copy()
         seg = result[0]
+        
+        # Add 1 to pred labels
+        seg = seg + 1
+        
+        # We commented this out for fine-tuning the model, but we might need to uncomment for evaluating the baseline!!!
         updated = set()
         for old_id, new_id in label_map.items():
             indices = np.argwhere(seg == old_id)

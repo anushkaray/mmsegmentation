@@ -52,15 +52,26 @@ def intersect_and_union(pred_label,
          torch.Tensor: The prediction histogram on all classes.
          torch.Tensor: The ground truth histogram on all classes.
     """
-    # updated = set()
-    # for old_id, new_id in label_map.items():
-    #     indices = np.argwhere(pred_label == old_id)
-    #     # print("indices ", indices)
-    #     for index in indices:
-    #         if tuple(index) not in updated:
-    #             pred_label[index[0]][index[1]] = new_id
-    #             updated.add(tuple(index))
+    pred_label = pred_label + 1
+    
+    updated = set()
+    for old_id, new_id in label_map.items():
+        indices = np.argwhere(pred_label == old_id)
+        # print("indices ", indices)
+        for index in indices:
+            if tuple(index) not in updated:
+                pred_label[index[0]][index[1]] = new_id
+                updated.add(tuple(index))
 
+    updated = set()
+    for old_id, new_id in label_map.items():
+        indices = np.argwhere(label == old_id)
+        # print("indices ", indices)
+        for index in indices:
+            if tuple(index) not in updated:
+                label[index[0]][index[1]] = new_id
+                updated.add(tuple(index))
+                
     if isinstance(pred_label, str):
         pred_label = torch.from_numpy(np.load(pred_label)) 
     else:
