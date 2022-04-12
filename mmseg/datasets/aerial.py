@@ -104,8 +104,8 @@ class AerialDataset(CustomDataset):
         self.CLASSES, self.PALETTE = self.get_classes_and_palette(self.AERIAL_CLASSES, self.AERIAL_PALETTE)
         self.gt_seg_map_loader_cfg = None
         self.reduce_zero_label = False
-        # print("self.CLASSES in aerial.py ", self.CLASSES)
-        # print("self.PALETTE in aerial.py ", self.PALETTE)
+        print("self.CLASSES in aerial.py ", self.CLASSES)
+        print("self.PALETTE in aerial.py ", self.PALETTE)
 
 
     def results2img(self, results, imgfile_prefix, to_label_id, indices=None):

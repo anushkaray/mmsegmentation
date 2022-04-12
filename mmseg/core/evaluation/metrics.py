@@ -52,16 +52,20 @@ def intersect_and_union(pred_label,
          torch.Tensor: The prediction histogram on all classes.
          torch.Tensor: The ground truth histogram on all classes.
     """
-    pred_label = pred_label + 1
+    # pred_label = pred_label + 1 (Need this for Segmenter)
     
-    updated = set()
-    for old_id, new_id in label_map.items():
-        indices = np.argwhere(pred_label == old_id)
-        # print("indices ", indices)
-        for index in indices:
-            if tuple(index) not in updated:
-                pred_label[index[0]][index[1]] = new_id
-                updated.add(tuple(index))
+        
+    print("Predicted Label Before (metrics.py) ", pred_label)
+    print("Ground Truth Label Before (metrics.py) ", label)
+    
+    #Commented out for Segformer!! (But need for Segmenter)
+    # updated = set()
+    # for old_id, new_id in label_map.items():
+    #     indices = np.argwhere(pred_label == old_id)
+    #     for index in indices:
+    #         if tuple(index) not in updated:
+    #             pred_label[index[0]][index[1]] = new_id
+    #             updated.add(tuple(index))
 
     updated = set()
     for old_id, new_id in label_map.items():

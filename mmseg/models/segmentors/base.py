@@ -246,7 +246,7 @@ class BaseSegmentor(BaseModule, metaclass=ABCMeta):
         seg = result[0]
         
         # Add 1 to pred labels
-        seg = seg + 1
+        # seg = seg + 1 (Need this for Segmenter but not for Segformer)
         
         # We commented this out for fine-tuning the model, but we might need to uncomment for evaluating the baseline!!!
         updated = set()
@@ -257,7 +257,6 @@ class BaseSegmentor(BaseModule, metaclass=ABCMeta):
                 if tuple(index) not in updated:
                     seg[index[0]][index[1]] = new_id
                     updated.add(tuple(index))
-
         if palette is None:
             if self.PALETTE is None:
                 # Get random state before set seed,
