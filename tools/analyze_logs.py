@@ -7,6 +7,7 @@ from collections import defaultdict
 
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 
 
 def plot_curve(log_dicts, args):
@@ -38,9 +39,17 @@ def plot_curve(log_dicts, args):
                 epoch_logs = log_dict[epoch]
                 if metric not in epoch_logs.keys():
                     continue
-                if metric in ['mIoU', 'mAcc', 'aAcc']:
-                    plot_epochs.append(epoch)
-                    plot_values.append(epoch_logs[metric][0])
+                # if metric == 'loss' and epoch % 10 != 0:
+                #     continue
+                if metric in ['mIoU', 'mAcc', 'aAcc', 'loss']:
+                    if metric != 'loss':                       
+                        plot_epochs.append(epoch)
+                        plot_values.append(epoch_logs[metric][0])
+                    elif metric == 'loss' and (epoch % 5 == 0 or epoch == 1) :
+                        plot_epochs.append(epoch)
+                        plot_values.append(epoch_logs[metric][0])
+                                                               
+                        
                 else:
                     for idx in range(len(epoch_logs[metric])):
                         if pre_iter > epoch_logs['iter'][idx]:
@@ -50,7 +59,7 @@ def plot_curve(log_dicts, args):
                         plot_values.append(epoch_logs[metric][idx])
             ax = plt.gca()
             label = legend[i * num_metrics + j]
-            if metric in ['mIoU', 'mAcc', 'aAcc']:
+            if metric in ['mIoU', 'mAcc', 'aAcc', 'loss']:
                 ax.set_xticks(plot_epochs)
                 plt.xlabel('epoch')
                 plt.plot(plot_epochs, plot_values, label=label, marker='o')
@@ -58,6 +67,7 @@ def plot_curve(log_dicts, args):
                 plt.xlabel('iter')
                 plt.plot(plot_iters, plot_values, label=label, linewidth=0.5)
         plt.legend()
+        plt.xticks(np.arange(0, len(epochs), 20))
         if args.title is not None:
             plt.title(args.title)
     if args.out is None:
@@ -79,7 +89,7 @@ def parse_args():
         '--keys',
         type=str,
         nargs='+',
-        default=['mIoU'],
+        default=['loss'],
         help='the metric that you want to plot')
     parser.add_argument('--title', type=str, help='title of figure')
     parser.add_argument(
