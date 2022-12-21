@@ -246,17 +246,8 @@ class BaseSegmentor(BaseModule, metaclass=ABCMeta):
         seg = result[0]
         
         # Add 1 to pred labels
-        # seg = seg + 1 (Need this for Segmenter but not for Segformer)
+        seg = seg + 1 # (Need this for fine-tuning and evaluating fine-tuned Segmenter but not for evaluating baseline Segmenter)
         
-        # We commented this out for fine-tuning the model, but we might need to uncomment for evaluating the baseline!!!
-        updated = set()
-        for old_id, new_id in label_map.items():
-            indices = np.argwhere(seg == old_id)
-            # print("indices ", indices)
-            for index in indices:
-                if tuple(index) not in updated:
-                    seg[index[0]][index[1]] = new_id
-                    updated.add(tuple(index))
         if palette is None:
             if self.PALETTE is None:
                 # Get random state before set seed,
@@ -273,7 +264,6 @@ class BaseSegmentor(BaseModule, metaclass=ABCMeta):
             else:
                 palette = self.PALETTE
         palette = np.array(palette)
-        # print("Palette in Base.py ", palette)
         assert palette.shape[0] == len(self.CLASSES)
         assert palette.shape[1] == 3
         assert len(palette.shape) == 2
