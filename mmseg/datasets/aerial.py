@@ -20,7 +20,6 @@ class AerialDataset(CustomDataset):
     """
     AERIAL_CLASSES = ('sconce', 'sidewalk', 'earth', 'grass', 'sand', 'water', 'rock', 'swimming pool', 'plant', 'building', 'wall', 'windowpane', 'door', 'fence', 'pole', 'person', 'animal', 'car', 'bicycle', 'tree', 'television receiver', 'microwave', 'coffee table', 'trade name')
     
-    # AERIAL_CLASSES = ('wall', 'building', 'tree', 'windowpane',  'grass', 'sidewalk', 'person','earth', 'door', 'plant','car', 'water','fence', 'rock', 'sand', 'coffee table', 'television receiver', 'pole','swimming pool','trade name', 'microwave', 'animal', 'bicycle','sconce')
     CLASSES = (
         'wall', 'building', 'sky', 'floor', 'tree', 'ceiling', 'road', 'bed ',
         'windowpane', 'grass', 'cabinet', 'sidewalk', 'person', 'earth',
@@ -48,10 +47,6 @@ class AerialDataset(CustomDataset):
         'clock', 'flag')
 
     AERIAL_PALETTE = [[0, 0, 0], [128, 64, 128], [130, 76, 0], [0, 102, 0], [112, 103, 87], [28, 42, 168], [48, 41, 30], [0, 50, 89], [107, 142, 35], [70, 70, 70], [102, 102, 156], [254, 228, 12], [254, 148, 12], [190, 153, 153], [153, 153, 153], [255, 22, 96], [102, 51, 0], [9, 143, 150], [119, 11, 32], [51, 51, 0], [190, 250, 190], [112, 150, 146], [2, 135, 115], [255, 0, 0]]
-
-
-    # AERIAL_PALETTE = [[102, 102, 156], [70, 70, 70], [51, 51, 0], [254, 228, 12], [0, 102, 0], [128, 64, 128], [255, 22, 96], [130, 76, 0], [254, 148, 12], [107, 142, 35], [9, 143, 150], [28, 42, 168], [190, 153, 153], [48, 41, 30], [112, 103, 87],[2, 135, 115], [190, 250, 190],[153, 153, 153], [0, 50, 89], [255, 0, 0],[112, 150, 146],[102, 51, 0],  [190, 250, 190], [0, 0, 0]]
-    
     
     PALETTE = [[120, 120, 120], [180, 120, 120], [6, 230, 230], [80, 50, 50],
                [4, 200, 3], [120, 120, 80], [140, 140, 140], [204, 5, 255],
@@ -91,8 +86,6 @@ class AerialDataset(CustomDataset):
                [71, 0, 255], [122, 0, 255], [0, 255, 184], [0, 92, 255],
                [184, 255, 0], [0, 133, 255], [255, 214, 0], [25, 194, 194],
                [102, 255, 0], [92, 0, 255]]
-    # PALETTE = None
-    # CLASSES = None
 
     def __init__(self, **kwargs):
         super(AerialDataset, self).__init__(
@@ -101,12 +94,10 @@ class AerialDataset(CustomDataset):
             reduce_zero_label=True,
             **kwargs
             )
-        self.CLASSES, self.PALETTE = self.get_classes_and_palette(self.AERIAL_CLASSES, self.AERIAL_PALETTE)
+        self.CLASSES, self.PALETTE = self.get_classes_and_palette(self.CLASSES, self.PALETTE)
+
         self.gt_seg_map_loader_cfg = None
         self.reduce_zero_label = False
-        print("self.CLASSES in aerial.py ", self.CLASSES)
-        print("self.PALETTE in aerial.py ", self.PALETTE)
-
 
     def results2img(self, results, imgfile_prefix, to_label_id, indices=None):
         """Write the segmentation results to images.
@@ -173,7 +164,6 @@ class AerialDataset(CustomDataset):
                the image paths, tmp_dir is the temporal directory created
                 for saving json/png files when img_prefix is not specified.
         """
-        print("IN FORMAT RESULTS")
         if indices is None:
             indices = list(range(len(self)))
 
@@ -183,5 +173,3 @@ class AerialDataset(CustomDataset):
         result_files = self.results2img(results, imgfile_prefix, to_label_id,
                                         indices)
         return result_files
-
-        
