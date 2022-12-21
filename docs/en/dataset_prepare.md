@@ -140,6 +140,12 @@ mmsegmentation
 │   │   │   ├── val
 ```
 
+### Custom Aerial Image Dataset
+
+We modified this repository to handle custom datasets of aerial images, including RGB images and grayscale annotation images from the [Aerial Semantic Segmentation Drone Dataset on Kaggle](https://www.kaggle.com/datasets/bulentsiyah/semantic-drone-dataset). The color values of the pixels for the annotation images should be equal to the ID number of the corresponding semantic class in the ADE20K dataset. For example, pixels in the annotation images for buildings should equal 1, and pixels for trees should equal 4. The order of the ADE20K classes is available in `mmseg/datasets/aerial.py`.
+
+We also provide the `scripts/preprocess_images.py` script to resize the RGB images and annotations to a consistent size, as well as split the RGB images and annotations into train, validation, and test datasets.
+
 ### Cityscapes
 
 The data could be found [here](https://www.cityscapes-dataset.com/downloads/) after registration.
