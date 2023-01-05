@@ -13,6 +13,19 @@ import argparse
 total_population = 'B01001e1'
 male_total_pop_est = 'B01001e2'
 female_total_pop_est = 'B01001e26'
+men_65_66_est = 'B01001e20'
+men_67_69_est = 'B01001e21'
+men_70_74_est = 'B01001e22'
+men_75_79_est = 'B01001e23'
+men_80_84_est = 'B01001e24'
+men_over_85 = 'B01001e25'
+
+women_65_66_est = 'B01001e44'
+women_67_69_est = 'B01001e45'
+women_70_74_est = 'B01001e46'
+women_75_79_est = 'B01001e47'
+women_80_84_est = 'B01001e48'
+women_over_85 = 'B01001e49'
 
 
 #X02_RACE
@@ -64,6 +77,18 @@ code_to_feature = {
                       total_population: 'total_population',
                       male_total_pop_est : 'male_total_pop_est',
                       female_total_pop_est: 'female_total_pop_est',
+                      men_65_66_est : 'men_65_66_est',
+                      men_67_69_est : 'men_67_69_est',
+                      men_70_74_est : 'men_70_74_est',
+                      men_75_79_est : 'men_75_79_est',
+                      men_80_84_est : 'men_80_84_est',
+                      men_over_85 : 'men_over_85',
+                      women_65_66_est : 'women_65_66_est',
+                      women_67_69_est : 'women_67_69_est',
+                      women_70_74_est : 'women_70_74_est',
+                      women_75_79_est : 'women_75_79_est',
+                      women_80_84_est : 'women_80_84_est',
+                      women_over_85 : 'women_over_85',
                       white_alone_est : 'white_alone_est',
                       black_afr_amer_alone_est : 'black_afr_amer_alone_est',
                       american_indian_alaska_est : 'american_indian_alaska_est',
@@ -94,11 +119,26 @@ code_to_feature = {
                       over_65_one_type : 'over_65_one_type',
                       over_65_two_or_more : 'over_65_two_or_more'
                   }
-                   
+
+
+
+
 #The features to process for each layer/category 
 to_process_per_layer = {'X01_AGE_AND_SEX' : [total_population,
                                              male_total_pop_est, 
-                                             female_total_pop_est],
+                                             female_total_pop_est,
+                                             men_65_66_est,
+                                             men_67_69_est,
+                                             men_70_74_est,
+                                             men_75_79_est,
+                                             men_80_84_est,
+                                             men_over_85,
+                                             women_65_66_est,
+                                             women_67_69_est, 
+                                             women_70_74_est,
+                                             women_75_79_est,
+                                             women_80_84_est,
+                                             women_over_85],
                         'X02_RACE' : [white_alone_est, 
                                       black_afr_amer_alone_est,
                                       american_indian_alaska_est,
@@ -134,6 +174,8 @@ to_process_per_layer = {'X01_AGE_AND_SEX' : [total_population,
 poc = to_process_per_layer['X02_RACE'][1:] + to_process_per_layer['X03_HISPANIC_OR_LATINO_ORIGIN']
 disability = to_process_per_layer['X18_DISABILITY']
 limited_english = to_process_per_layer['X16_LANGUAGE_SPOKEN_AT_HOME']
+male_seniors = to_process_per_layer['X01_AGE_AND_SEX'][3:9]
+female_seniors = to_process_per_layer['X01_AGE_AND_SEX'][9:]
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Process Socioeconomic Data for Boston from ACS Source')
@@ -143,7 +185,7 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-def combine_groups(df, poc, disability, limited_english, code_to_feature):
+def combine_groups(df, poc, disability, limited_english, male_seniors, female_seniors, code_to_feature):
     total_poc = 0
     for group in poc:
         group_str = code_to_feature[group]
@@ -163,6 +205,21 @@ def combine_groups(df, poc, disability, limited_english, code_to_feature):
         total_lim_english += df[group_str]
     
     df['Limited English Proficiency'] = total_lim_english
+    
+    total_male_seniors = 0
+    for group in male_seniors:
+        group_str = code_to_feature[group]
+        total_male_seniors += df[group_str]
+    
+    df['Male Population Over 65'] = total_male_seniors
+    
+    total_female_seniors = 0
+    for group in female_seniors:
+        group_str = code_to_feature[group]
+        total_female_seniors += df[group_str]
+    
+    df['Female Population Over 65'] = total_female_seniors
+        
     
     
     return df
@@ -195,7 +252,7 @@ def find_pop_density(shapefile, result_df):
     return df
     
 
-def process_acs_data(gdb_path, to_process_per_layer, code_to_feature, poc, disability, limited_english, shapefile_path):
+def process_acs_data(gdb_path, to_process_per_layer, code_to_feature, poc, disability, limited_english,male_seniors,female_seniors, shapefile_path):
     ct_df = gpd.read_file(shapefile_path)
     ct_df = ct_df.to_crs(epsg=4326)
     layers = fiona.listlayers(gdb_path)
@@ -224,12 +281,12 @@ def process_acs_data(gdb_path, to_process_per_layer, code_to_feature, poc, disab
                         output[census_tract] = inner_dict
     df = pd.DataFrame.from_dict(output)
     df = df.transpose()
-    df = combine_groups(df, poc, disability, limited_english, code_to_feature) 
+    df = combine_groups(df, poc, disability, limited_english, male_seniors,female_seniors, code_to_feature) 
     return df
 
 
-def get_condensed(df, output_path_condense, poc, disability, limited_english):
-    values_to_include = ['total_population','POC','Disabled Population', 'Limited English Proficiency', 'total_population', 'male_total_pop_est','female_total_pop_est', 'foreign_born_not_us_citizen', 'children_under_6_years', 'total_poverty_status']
+def get_condensed(df, output_path_condense, poc, disability, limited_english, male_seniors, female_seniors):
+    values_to_include = ['total_population','POC','Disabled Population', 'Limited English Proficiency', 'total_population', 'male_total_pop_est','female_total_pop_est', 'foreign_born_not_us_citizen', 'children_under_6_years', 'total_poverty_status', 'Male Population Over 65', 'Female Population Over 65']
         
     output_df = df[values_to_include].copy()
     return output_df
@@ -240,8 +297,8 @@ if __name__ == '__main__':
     boston_census_tract_shapefile = args.shapefile
     gdb_path = args.socioecon_path
     output_path_condense = args.output_path
-    big_df = process_acs_data(gdb_path, to_process_per_layer, code_to_feature, poc, disability, limited_english, boston_census_tract_shapefile)
-    condensed_df = get_condensed(big_df, output_path_condense, poc, disability, limited_english)
+    big_df = process_acs_data(gdb_path, to_process_per_layer, code_to_feature, poc, disability, limited_english, male_seniors, female_seniors, boston_census_tract_shapefile)
+    condensed_df = get_condensed(big_df, output_path_condense, poc, disability, limited_english, male_seniors, female_seniors)
     condensed_pop_df = find_pop_density(boston_census_tract_shapefile, condensed_df)
     condensed_pop_df.to_csv(output_path_condense)
 
